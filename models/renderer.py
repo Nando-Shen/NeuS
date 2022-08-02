@@ -361,6 +361,7 @@ class NeuSRenderer:
 
         color_fine = ret_fine['color']
         weights = ret_fine['weights']
+        sdf = ret_fine['sdf']
         weights_sum = weights.sum(dim=-1, keepdim=True)
         gradients = ret_fine['gradients']
         s_val = ret_fine['s_val'].reshape(batch_size, n_samples).mean(dim=-1, keepdim=True)
@@ -373,6 +374,7 @@ class NeuSRenderer:
             'weight_max': torch.max(weights, dim=-1, keepdim=True)[0],
             'gradients': gradients,
             'weights': weights,
+            'sdf': sdf,
             'gradient_error': ret_fine['gradient_error'],
             'inside_sphere': ret_fine['inside_sphere']
         }

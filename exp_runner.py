@@ -128,6 +128,7 @@ class Runner:
             gradient_error = render_out['gradient_error']
             weight_max = render_out['weight_max']
             weight_sum = render_out['weight_sum']
+            sdf = render_out['sdf']
 
             # Loss
             color_error = (color_fine - true_rgb) * mask
@@ -155,6 +156,7 @@ class Runner:
             self.writer.add_scalar('Statistics/cdf', (cdf_fine[:, :1] * mask).sum() / mask_sum, self.iter_step)
             self.writer.add_scalar('Statistics/weight_max', (weight_max * mask).sum() / mask_sum, self.iter_step)
             self.writer.add_scalar('Statistics/psnr', psnr, self.iter_step)
+            self.writer.add_scalar('Statistics/sdf', sdf, self.iter_step)
 
             if self.iter_step % self.report_freq == 0:
                 print(self.base_exp_dir)
