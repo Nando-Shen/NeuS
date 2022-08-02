@@ -96,6 +96,7 @@ class Runner:
             self.file_backup()
 
     def train(self):
+        print('start training')
         self.writer = SummaryWriter(log_dir=os.path.join(self.base_exp_dir, 'logs'))
         self.update_learning_rate()
         res_step = self.end_iter - self.iter_step
