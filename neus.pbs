@@ -4,10 +4,10 @@
 #PBS -l walltime=00:05:00
 #PBS -j oe
 
-cd /home/jshe2377/OmniNeRF
+cd /home/jshe2377/NeuS
 
 module load python/3.8.2 magma/2.5.3 openmpi-gcc/3.1.5
-source nerf/bin/activate
+source neus/bin/activate
 module load cuda/10.2.89
 
 python exp_runner.py --mode train --conf ./confs/wmask.conf --case bmvs_stone
