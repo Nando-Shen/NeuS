@@ -15,6 +15,7 @@ from pyhocon import ConfigFactory
 from models.dataset import Dataset
 from models.fields import RenderingNetwork, SDFNetwork, SingleVarianceNetwork, NeRF
 from models.renderer import NeuSRenderer
+from sdf_utils import plot_sdf_predicted
 
 
 class Runner:
@@ -128,7 +129,7 @@ class Runner:
             gradient_error = render_out['gradient_error']
             weight_max = render_out['weight_max']
             weight_sum = render_out['weight_sum']
-            sdf = render_out['sdf']
+
 
             # Loss
             color_error = (color_fine - true_rgb) * mask
@@ -156,7 +157,6 @@ class Runner:
             self.writer.add_scalar('Statistics/cdf', (cdf_fine[:, :1] * mask).sum() / mask_sum, self.iter_step)
             self.writer.add_scalar('Statistics/weight_max', (weight_max * mask).sum() / mask_sum, self.iter_step)
             self.writer.add_scalar('Statistics/psnr', psnr, self.iter_step)
-            self.writer.add_scalar('Statistics/sdf', sdf, self.iter_step)
 
             if self.iter_step % self.report_freq == 0:
                 print(self.base_exp_dir)
@@ -248,6 +248,8 @@ class Runner:
 
         out_rgb_fine = []
         out_normal_fine = []
+        sdf = []
+        z_vals = []
 
         for rays_o_batch, rays_d_batch in zip(rays_o, rays_d):
             near, far = self.dataset.near_far_from_sphere(rays_o_batch, rays_d_batch)
@@ -259,6 +261,9 @@ class Runner:
                                               far,
                                               cos_anneal_ratio=self.get_cos_anneal_ratio(),
                                               background_rgb=background_rgb)
+
+            sdf.append(render_out['sdf'].detach().cpu().numpy())
+            z_vals.append(render_out['z_vals'].detach().cpu().numpy())
 
             def feasible(key): return (key in render_out) and (render_out[key] is not None)
 
@@ -272,6 +277,8 @@ class Runner:
                 normals = normals.sum(dim=1).detach().cpu().numpy()
                 out_normal_fine.append(normals)
             del render_out
+
+        self.writer.add_image(f'valsdf/sampled', plot_sdf_predicted(z_vals, sdf), global_step=self.iter_step)
 
         img_fine = None
         if len(out_rgb_fine) > 0:

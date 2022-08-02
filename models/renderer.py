@@ -375,6 +375,7 @@ class NeuSRenderer:
             'gradients': gradients,
             'weights': weights,
             'sdf': sdf,
+            'z_vals': ret_fine['mid_z_vals'],
             'gradient_error': ret_fine['gradient_error'],
             'inside_sphere': ret_fine['inside_sphere']
         }
