@@ -248,9 +248,10 @@ class Runner:
 
         out_rgb_fine = []
         out_normal_fine = []
-        sdf = []
-        z_vals = []
+        # sdf = []
+        # z_vals = []
 
+        printimg = True
         for rays_o_batch, rays_d_batch in zip(rays_o, rays_d):
             near, far = self.dataset.near_far_from_sphere(rays_o_batch, rays_d_batch)
             background_rgb = torch.ones([1, 3]) if self.use_white_bkgd else None
@@ -262,8 +263,13 @@ class Runner:
                                               cos_anneal_ratio=self.get_cos_anneal_ratio(),
                                               background_rgb=background_rgb)
 
-            sdf.append(render_out['sdf'].detach().cpu().numpy())
-            z_vals.append(render_out['z_vals'].detach().cpu().numpy())
+            # sdf.append(render_out['sdf'].detach().cpu().numpy())
+            # z_vals.append(render_out['z_vals'].detach().cpu().numpy())
+            if printimg:
+                z_vals = render_out['z_vals']
+                sdf = render_out['sdf']
+                self.writer.add_image(f'valsdf/sampled', plot_sdf_predicted(z_vals, sdf), global_step=self.iter_step)
+                printimg = False
 
             def feasible(key): return (key in render_out) and (render_out[key] is not None)
 
@@ -278,7 +284,6 @@ class Runner:
                 out_normal_fine.append(normals)
             del render_out
 
-        self.writer.add_image(f'valsdf/sampled', plot_sdf_predicted(z_vals, sdf), global_step=self.iter_step)
 
         img_fine = None
         if len(out_rgb_fine) > 0:
