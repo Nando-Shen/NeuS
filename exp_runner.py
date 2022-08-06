@@ -266,8 +266,8 @@ class Runner:
             # sdf.append(render_out['sdf'].detach().cpu().numpy())
             # z_vals.append(render_out['z_vals'].detach().cpu().numpy())
             if printimg:
-                z_vals = render_out['z_vals']
-                sdf = render_out['sdf']
+                z_vals = render_out['z_vals'][1]
+                sdf = render_out['sdf'][1]
                 self.writer.add_image(f'valsdf/sampled', plot_sdf_predicted(z_vals, sdf), global_step=self.iter_step)
                 printimg = False
 
