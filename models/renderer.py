@@ -218,6 +218,7 @@ class NeuSRenderer:
         dirs = dirs.reshape(-1, 3)
 
         sdf_nn_output = sdf_network(pts)
+        print(sdf_nn_output.shape)
         sdf = sdf_nn_output[:, :1]
         feature_vector = sdf_nn_output[:, 1:]
 
