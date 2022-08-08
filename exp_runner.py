@@ -270,8 +270,8 @@ class Runner:
                 sdf = render_out['sdf']
                 print(sdf.shape)
                 print(z_vals.shape)
-                z_vals = z_vals[:, 0]
-                sdf = sdf[:512, :]
+                z_vals = z_vals[0, :]
+                sdf = sdf[:128, :]
                 self.writer.add_image(f'valsdf/sampled', plot_sdf_predicted(z_vals, sdf), global_step=self.iter_step)
                 printimg = False
 
